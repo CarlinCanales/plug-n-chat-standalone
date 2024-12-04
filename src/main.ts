@@ -1,6 +1,7 @@
 import './style.scss'
 
 const BRAND_NAME = 'chatify';
+const CHATS: { [key: string]: HTMLElement } = {};
 
 function concatClassNameWithBrandName(name: string) {
     return `${BRAND_NAME}-${name}`;
@@ -9,9 +10,24 @@ function concatClassNameWithBrandName(name: string) {
 function wrapShell(shell: HTMLElement) {
     const wrapper = document.createElement('div');
     wrapper.classList.add(concatClassNameWithBrandName('shell-wrapper'));
-    wrapper.classList.add('open');
     wrapper.append(shell);
     return wrapper;
+}
+
+function createNewSingleChat({id, name}) {
+    const singleChatShell = document.createElement('iframe');
+    singleChatShell.setAttribute('data-chatify', '');
+    singleChatShell.classList.add(concatClassNameWithBrandName('single-chat'));
+    singleChatShell.classList.add(concatClassNameWithBrandName('single-chat'));
+    singleChatShell.setAttribute('src', `http://localhost:3000/chat?id=${id}`);
+    const wrappedShell = wrapShell(singleChatShell);
+    CHATS[id] = wrappedShell;
+    return wrappedShell;
+}
+
+function closeSingleChat(id: string) {
+    CHATS[id].remove();
+    delete CHATS[id];
 }
 
 const chatifyShell = document.createElement('div');
@@ -22,25 +38,25 @@ messengerDashboard.classList.add(concatClassNameWithBrandName('dashboard'));
 messengerDashboard.setAttribute('data-chatify', '');
 messengerDashboard.setAttribute('src', 'http://localhost:3000/dashboard');
 
-const singleChatShell = document.createElement('iframe');
-singleChatShell.setAttribute('data-chatify', '');
-singleChatShell.classList.add(concatClassNameWithBrandName('single-chat'));
-singleChatShell.classList.add(concatClassNameWithBrandName('single-chat'));
-singleChatShell.setAttribute('src', 'http://localhost:3000/chat');
-
 chatifyShell.appendChild(wrapShell(messengerDashboard));
-chatifyShell.appendChild(wrapShell(singleChatShell));
 
 window.addEventListener('message', (e) => {
     if (e.data.source === 'chatify') {
-        if (e.data.message === 'toggle dashboard') {
-            messengerDashboard.closest(`.${concatClassNameWithBrandName(('shell-wrapper'))}`)?.classList.toggle('open');
-        }
-        if (e.data.message === 'create new single chat') {
-            chatifyShell.appendChild(wrapShell(singleChatShell));
+        switch (e.data.message) {
+            case 'toggle dashboard':
+                messengerDashboard.closest(`.${concatClassNameWithBrandName(('shell-wrapper'))}`)?.classList.toggle('open');
+                break;
+            case 'toggle chat':
+                CHATS[e.data.id].closest(`.${concatClassNameWithBrandName(('shell-wrapper'))}`)?.classList.toggle('open');
+                break;
+            case 'close chat':
+                closeSingleChat(e.data.id);
+                break;
+            case 'create new single chat':
+                chatifyShell.appendChild(createNewSingleChat(e.data.props));
+                break;
         }
     }
-
 })
 
 document.body.appendChild(chatifyShell);
