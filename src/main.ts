@@ -14,7 +14,7 @@ function wrapShell(shell: HTMLElement) {
     return wrapper;
 }
 
-function createNewSingleChat({id, name}) {
+function createNewSingleChat(id: string) {
     const singleChatShell = document.createElement('iframe');
     singleChatShell.setAttribute('data-chatify', '');
     singleChatShell.classList.add(concatClassNameWithBrandName('single-chat'));
@@ -25,7 +25,7 @@ function createNewSingleChat({id, name}) {
     return wrappedShell;
 }
 
-function closeSingleChat(id: string) {
+function closeSingleChat(id: number) {
     CHATS[id].remove();
     delete CHATS[id];
 }
@@ -53,7 +53,11 @@ window.addEventListener('message', (e) => {
                 closeSingleChat(e.data.id);
                 break;
             case 'create new single chat':
-                chatifyShell.appendChild(createNewSingleChat(e.data.props));
+                // only create new chat if one with that id doesn't already exist
+                const {id} = e.data.props;
+                if (!CHATS[id as number]) {
+                    chatifyShell.appendChild(createNewSingleChat(id));
+                }
                 break;
         }
     }
