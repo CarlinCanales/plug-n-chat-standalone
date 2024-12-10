@@ -36,7 +36,15 @@ chatifyShell.classList.add(concatClassNameWithBrandName('shell'));
 const messengerDashboard = document.createElement('iframe');
 messengerDashboard.classList.add(concatClassNameWithBrandName('dashboard'));
 messengerDashboard.setAttribute('data-chatify', '');
-messengerDashboard.setAttribute('src', 'http://localhost:3000/dashboard');
+
+const userId = window.sessionStorage.getItem('userId');
+if (userId) {
+    messengerDashboard.setAttribute('src', `http://localhost:3000/dashboard?id=${userId}`);
+} else {
+    const newUserId = Math.random().toString().substring(2);
+    window.sessionStorage.setItem('userId', newUserId);
+    messengerDashboard.setAttribute('src', `http://localhost:3000/dashboard?id=${newUserId}`);
+}
 
 chatifyShell.appendChild(wrapShell(messengerDashboard));
 
