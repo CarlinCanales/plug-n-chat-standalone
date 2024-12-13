@@ -14,14 +14,14 @@ function wrapShell(shell: HTMLElement) {
     return wrapper;
 }
 
-function createNewSingleChat(id: string) {
+function createNewSingleChat(userId: string, friendId: string) {
     const singleChatShell = document.createElement('iframe');
     singleChatShell.setAttribute('data-chatify', '');
     singleChatShell.classList.add(concatClassNameWithBrandName('single-chat'));
     singleChatShell.classList.add(concatClassNameWithBrandName('single-chat'));
-    singleChatShell.setAttribute('src', `http://localhost:3000/chat?id=${id}`);
+    singleChatShell.setAttribute('src', `http://localhost:3000/chat?userId=${userId}&friendId=${friendId}`);
     const wrappedShell = wrapShell(singleChatShell);
-    CHATS[id] = wrappedShell;
+    CHATS[friendId] = wrappedShell;
     return wrappedShell;
 }
 
@@ -37,13 +37,14 @@ const messengerDashboard = document.createElement('iframe');
 messengerDashboard.classList.add(concatClassNameWithBrandName('dashboard'));
 messengerDashboard.setAttribute('data-chatify', '');
 
+// TODO: this is a temporary way to store an id until I build in an account system
 const userId = window.sessionStorage.getItem('userId');
 if (userId) {
-    messengerDashboard.setAttribute('src', `http://localhost:3000/dashboard?id=${userId}`);
+    messengerDashboard.setAttribute('src', `http://localhost:3000/dashboard?userId=${userId}`);
 } else {
     const newUserId = Math.random().toString().substring(2);
     window.sessionStorage.setItem('userId', newUserId);
-    messengerDashboard.setAttribute('src', `http://localhost:3000/dashboard?id=${newUserId}`);
+    messengerDashboard.setAttribute('src', `http://localhost:3000/dashboard?userId=${newUserId}`);
 }
 
 chatifyShell.appendChild(wrapShell(messengerDashboard));
@@ -62,9 +63,9 @@ window.addEventListener('message', (e) => {
                 break;
             case 'create new single chat':
                 // only create new chat if one with that id doesn't already exist
-                const {id} = e.data.props;
-                if (!CHATS[id as number]) {
-                    chatifyShell.appendChild(createNewSingleChat(id));
+                const {uid, fid} = e.data;
+                if (!CHATS[fid as number]) {
+                    chatifyShell.appendChild(createNewSingleChat(uid, fid));
                 }
                 break;
         }
