@@ -23,5 +23,7 @@
 
 iframe[data-chatify] {
   border: 1px solid black;
+  border-bottom: none;
   height: 100%;
+  box-sizing: border-box;
 }
