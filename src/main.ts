@@ -1,8 +1,7 @@
 import './style.scss'
 
 const BRAND_NAME = 'chatify';
-// const HOST = 'http://192.168.12.237:3000';
-const HOST = 'http://localhost:3000';
+const HOST = import.meta.env.VITE_HOST;
 const CHATS: { [key: string]: HTMLElement } = {};
 
 function concatClassNameWithBrandName(name: string) {
