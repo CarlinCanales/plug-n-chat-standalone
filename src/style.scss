@@ -5,7 +5,6 @@
     top: 100%;
     display: flex;
     gap: 2rem;
-    background: white;
   }
 
   &-shell-wrapper {
@@ -27,4 +26,5 @@ iframe[data-chatify] {
   border-bottom: none;
   height: 100%;
   box-sizing: border-box;
+  background: white;
 }
