@@ -1,0 +1,1 @@
+.chatify-shell{position:fixed;top:100%;display:flex;gap:2rem}.chatify-shell-wrapper{width:18rem;height:calc(100vh - 12rem);transform:translateY(-3rem);transition:transform .2s ease-in-out}.chatify-shell-wrapper.open{transform:translateY(calc(12rem - 100vh))}iframe[data-chatify]{border:1px solid black;border-bottom:none;height:100%;box-sizing:border-box}
